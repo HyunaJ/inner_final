@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI-Padong</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+        nav {
+            background-color: #f5f5f5;
+            width: 250px;
+            padding: 20px;
+        }
+        main {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .translator-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: 'Arial', sans-serif;
+        }
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>Kaeri law-bot</h1>
+        <div class="form-group">
+            <label for="models">Choose a model</label>
+            <select id="models">
+                <option value="EVEv1">EVE-Korean-Instruct-10.8b-v1.0</option>
+                <!-- More models can be added here -->
+            </select>
+        </div>
+        <div class="function">
+            <label for="functions">Choose a function</label>
+            <select id="functions" onchange="functionSelected()">
+                <option value="trans">Translator</option>
+                <option value="nuclear expert">Nuclear expert</option>
+                <option value="kaeri law-bot" selected>Kaeri law-bot</option>
+                <!-- More models can be added here -->
+            </select>
+        </div>
+    </nav>
+
+    <script>
+        function functionSelected() {
+            var functionChoice = document.getElementById('functions').value;
+            if (functionChoice === 'kaeri law-bot') {
+                window.location.href = '/law'; // Redirect to the law page
+            }
+            else if (functionChoice === 'trans') {
+                window.location.href = '/'; // Redirect to the main page
+            }
+            else if (functionChoice === 'nuclear expert') {
+                window.location.href = '/pdf'; // Redirect to the main page
+            }
+            // Add more conditions here if needed for other options
+        }
+    </script>
+
+    <main>
+            <div class="form-group">
+                <label for="AskLaw">Ask me about the regulations</label>
+                <textarea id="AskLaw"></textarea>
+            </div>
+            <button id="lawButton">Send</button>
+            <div class="form-group">
+                <textarea id="lawOutput" readonly></textarea>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById("lawButton").addEventListener("click", function() {
+            // 폼에서 값들을 가져와요
+            let AskLaw = document.getElementById("AskLaw").value;
+    
+            // 요청에 담을 데이터를 만들어요
+            const data = {
+                text: AskLaw
+            };
+    
+            // POST 요청
+            fetch('/law_process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 텍스트를 화면에 표시
+                document.getElementById("lawOutput").value = data.law_QA;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
